@@ -1,4 +1,4 @@
-# The title of your library here, either `library.inc` or `My Cool Library`
+# inventory
 
 A simple inventory script for storing [items](/ScavengeSurvive/item) in per-player [containers](/ScavengeSurvive/container).
 
