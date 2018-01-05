@@ -1,6 +1,6 @@
 # inventory
 
-A simple inventory script for storing [items](/ScavengeSurvive/item) in per-player [containers](/ScavengeSurvive/container).
+A simple inventory script for storing [items](https://github.com/ScavengeSurvive/item) in per-player [containers](https://github.com/ScavengeSurvive/container).
 
 ## Installation
 
