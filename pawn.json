@@ -1,16 +1,14 @@
 {
-	"user": "ScavengeSurvive",
-	"repo": "inventory",
-	"entry": "test.pwn",
-	"output": "test.amx",
-	"dependencies": [
-		"Southclaws/samp-stdlib",
-		"ScavengeSurvive/container",
-		"Misiur/YSI-Includes",
-		"Southclaws/samp-logger",
-		"samp-incognito/samp-streamer-plugin"
-	],
-	"dev_dependencies": [
-		"ScavengeSurvive/test-boilerplate"
-	]
+    "user": "ScavengeSurvive",
+    "repo": "inventory",
+    "entry": "test.pwn",
+    "output": "test.amx",
+    "dependencies": [
+        "Southclaws/samp-stdlib",
+        "ScavengeSurvive/container",
+        "pawn-lang/YSI-Includes",
+        "Southclaws/samp-logger",
+        "samp-incognito/samp-streamer-plugin"
+    ],
+    "dev_dependencies": ["ScavengeSurvive/test-boilerplate"]
 }
