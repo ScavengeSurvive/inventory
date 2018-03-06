@@ -330,8 +330,8 @@ timer _inventory_tearDown[1](playerid) {
 }
 
 
-hook OnScriptInit() {
-	for(new i; i < MAX_PLAYERS; i++) {
+hook OnFilterScriptInit() {
+	foreach(new i : Player) {
 		_inventory_playerSetup(i);
 	}
 }
