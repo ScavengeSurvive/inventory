@@ -297,18 +297,18 @@ _inventory_playerSetup(playerid) {
 			_i("containerid", inv_Container[playerid]));
 	}
 
-	new ret = CreateContainer("Inventory", MAX_INVENTORY_SLOTS);
+	new containerid = CreateContainer("Inventory", MAX_INVENTORY_SLOTS);
 
-	if(!IsValidContainer(inv_Container[playerid])) {
+	if(!IsValidContainer(containerid)) {
 		err("failed to create inventory container for player",
 			_i("playerid", playerid),
-			_i("return", ret));
+			_i("containerid", containerid));
 		
 		return;
 	}
 	
-	inv_Container[playerid] = ret;
-	inv_ContainerPlayer[ret] = playerid;
+	inv_Container[playerid] = containerid;
+	inv_ContainerPlayer[containerid] = playerid;
 }
 
 timer _inventory_tearDown[1](playerid) {
