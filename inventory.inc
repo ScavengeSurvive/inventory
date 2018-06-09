@@ -23,151 +23,96 @@
 	#define MAX_INVENTORY_SLOTS (4)
 #endif
 
-forward AddItemToInventory(playerid, itemid, call = 1);
-/*
-# Description
-Adds specified item to players inventory and removes item from world.
 
-# Parameters
-- call: Determines whether or not to call OnItemAddToInventory.
+// Adds specified item to players inventory and removes item from world. `call`
+// determines whether or not to call OnItemAddToInventory. Returns 0 on success.
+// If item doesn't fit, returns a positive integer representing required item
+// slots, otherwise -1 if itemid invalid, -2 if item is already in container, -4
+// if OnItemAddToInventory returned non-zero, -5 if item is in the inventory of
+// another player, -6 if item is inside a container from the container package.
+forward AddItemToInventory(playerid, Item:itemid, call = 1);
 
-# Returns
-Returns 0 on success. If item doesn't fit, returns a positive integer
-representing required item slots, otherwise -1 if itemid invalid, -2 if item is
-already in container, -4 if OnItemAddToInventory returned non-zero, -5 if item
-is in the inventory of another player, -6 if item is inside a container from the
-SIF/Container module.
-*/
-
+// Removes the item from the specified slot if there is one. If `call` is true,
+// will call OnItemRemoveFromInventory.
 forward RemoveItemFromInventory(playerid, slotid, call = 1);
-/*
-# Description
-Removes the item from the specified slot if there is one.
 
-# Parameters
-- slotid: Inventory slot to remove from, not an itemid.
-- call: If true, will call OnItemRemoveFromInventory.
-*/
+// GetInventorySlotItem returns the ID handle of the item stored in the
+// specified slot.
+forward GetInventorySlotItem(playerid, slotid, &Item:itemid);
 
-forward GetInventorySlotItem(playerid, slotid, &itemid);
-/*
-# Description
-Returns the ID handle of the item stored in the specified slot.
-*/
-
+// IsInventorySlotUsed checks if the specified inventory slot contains an item.
 forward bool:IsInventorySlotUsed(playerid, slotid);
-/*
-# Description
-Checks if the specified inventory slot contains an item.
-*/
 
+// IsPlayerInventoryFull checks if a players inventory is full.
 forward bool:IsPlayerInventoryFull(playerid);
-/*
-# Description
-Checks if a players inventory is full.
-*/
 
+// IsPlayerInventoryEmpty checks if a players inventory is empty.
 forward bool:IsPlayerInventoryEmpty(playerid);
-/*
-# Description
-Checks if a players inventory is empty.
-*/
 
+// InventoryFitsItemType checks if an item type will fit into a player's
+// inventory.
 forward InventoryFitsItemType(playerid, ItemType:itemtype, &bool:result);
-/*
-# Description
-Checks if an item type will fit into a player's inventory.
-*/
 
+// GetInventoryFreeSlots returns the amount of free slots in a player's
+// inventory.
 forward GetInventoryFreeSlots(playerid, &slots);
-/*
-# Description
-Returns the amount of free slots in a player's inventory.
-*/
 
-forward GetItemInventoryPlayer(itemid, &playerid);
-/*
-# Description
-Returns the ID of a player if itemid is stored in their inventory.
-*/
+// GetItemInventoryPlayer returns the ID of a player if itemid is stored in
+// their inventory.
+forward GetItemInventoryPlayer(Item:itemid, &playerid);
 
-forward GetItemPlayerInventorySlot(itemid, &slot);
-/*
-# Description
-Returns inventory slot of an item if it's stored inside a player's inventory.
-*/
+// GetItemPlayerInventorySlot returns inventory slot of an item if it's stored
+// inside a player's inventory.
+forward GetItemPlayerInventorySlot(Item:itemid, &slot);
 
+// SetPlayerInventorySize sets the maximum amount of slots a player's inventory
+// has.
 forward SetPlayerInventorySize(playerid, size);
-/*
-# Description
-Sets the maximum amount of slots a player's inventory has.
-*/
 
+// GetPlayerInventorySize returns the capacity of a player's inventory.
 forward GetPlayerInventorySize(playerid, &size);
-/*
-# Description
-Returns the capacity of a player's inventory.
-*/
 
 
-// Events
-
-
+// OnItemAddToInventory is called Before an item is added to a player's
+// inventory by the function `AddItemToInventory`. Return 1 to cancel.
 forward OnItemAddToInventory(playerid, itemid);
-/*
-# Called
-Before an item is added to a player's inventory by the function AddItemToInventory.
 
-# Returns
-1 to cancel item being added.
-*/
-
+// After an item is added to a player's inventory by the function
+// `AddItemToInventory`.
 forward OnItemAddedToInventory(playerid, itemid);
-/*
-# Called
-After an item is added to a player's inventory by the function AddItemToInventory.
-*/
 
+// Before an item is removed from a player's inventory by the function
+// `RemoveItemFromInventory`. Return 1 to cancel.
 forward OnItemRemoveFromInventory(playerid, slot);
-/*
-# Called
-Before an item is removed from a player's inventory by the function RemoveItemFromInventory.
 
-# Returns
-1 to cancel item being removed.
-*/
-
+// Called after an item is removed from a player's inventory by the function
+// `RemoveItemFromInventory`.
 forward OnItemRemovedFromInventory(playerid, slot);
-/*
-# Called
-After an item is removed from a player's inventory by the function RemoveItemFromInventory.
-*/
 
 
 static
-	inv_Container[MAX_PLAYERS] = {INVALID_CONTAINER_ID, ...},
+	Container:inv_Container[MAX_PLAYERS] = {INVALID_CONTAINER_ID, ...},
 	inv_ContainerPlayer[MAX_CONTAINER] = {INVALID_PLAYER_ID, ...};
 
 
-stock AddItemToInventory(playerid, itemid, call = 1) {
+stock AddItemToInventory(playerid, Item:itemid, call = 1) {
 	if(!IsPlayerConnected(playerid)) {
 		return 1;
 	}
 
 	if(call) {
-		if(CallLocalFunction("OnItemAddToInventory", "dd", playerid, itemid)) {
+		if(CallLocalFunction("OnItemAddToInventory", "dd", playerid, _:itemid)) {
 			return 2;
 		}
 	}
 
 	new ret = AddItemToContainer(inv_Container[playerid], itemid, playerid, call);
-
-	if(ret > 0) {
+	if(ret) {
 		return ret;
 	}
 
 	if(call) {
-		CallLocalFunction("OnItemAddedToInventory", "dd", playerid, itemid);
+		CallLocalFunction("OnItemAddedToInventory", "dd", playerid, _:itemid);
 	}
 
 	return 0;
@@ -185,8 +130,7 @@ stock RemoveItemFromInventory(playerid, slotid, call = 1) {
 	}
 
 	new ret = RemoveItemFromContainer(inv_Container[playerid], slotid, playerid, call);
-
-	if(ret > 0) {
+	if(ret) {
 		return ret;
 	}
 
@@ -197,7 +141,7 @@ stock RemoveItemFromInventory(playerid, slotid, call = 1) {
 	return 1;
 }
 
-stock GetInventorySlotItem(playerid, slotid, &itemid) {
+stock GetInventorySlotItem(playerid, slotid, &Item:itemid) {
 	if(!IsPlayerConnected(playerid)) {
 		return 1;
 	}
@@ -245,16 +189,14 @@ stock GetInventoryFreeSlots(playerid, &slots) {
 	return GetContainerFreeSlots(inv_Container[playerid], slots);
 }
 
-stock GetItemInventoryPlayer(itemid, &playerid) {
+stock GetItemInventoryPlayer(Item:itemid, &playerid) {
 	if(!IsValidItem(itemid)) {
 		return 1;
 	}
 
-	new containerid;
-
+	new Container:containerid;
 	new ret = GetItemContainer(itemid, containerid);
-
-	if(ret != 0) {
+	if(ret) {
 		return ret;
 	}
 
@@ -262,7 +204,7 @@ stock GetItemInventoryPlayer(itemid, &playerid) {
 	return 0;
 }
 
-stock GetItemPlayerInventorySlot(itemid, &slot) {
+stock GetItemPlayerInventorySlot(Item:itemid, &slot) {
 	return GetItemContainerSlot(itemid, slot);
 }
 
@@ -294,15 +236,15 @@ _inventory_playerSetup(playerid) {
 	if(IsValidContainer(inv_Container[playerid])) {
 		err("attempted to create inventory container for player and container already exists",
 			_i("playerid", playerid),
-			_i("containerid", inv_Container[playerid]));
+			_i("containerid", _:inv_Container[playerid]));
 	}
 
-	new containerid = CreateContainer("Inventory", MAX_INVENTORY_SLOTS);
+	new Container:containerid = CreateContainer("Inventory", MAX_INVENTORY_SLOTS);
 
 	if(!IsValidContainer(containerid)) {
 		err("failed to create inventory container for player",
 			_i("playerid", playerid),
-			_i("containerid", containerid));
+			_i("containerid", _:containerid));
 		
 		return;
 	}
