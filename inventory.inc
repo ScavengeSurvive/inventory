@@ -14,8 +14,8 @@
 #include <logger>
 #include <item>
 #include <container>
-#include <YSI\y_timers>
-#include <YSI\y_hooks>
+#include <YSI_Coding\y_timers>
+#include <YSI_Coding\y_hooks>
 
 
 // Maximum amount of item slots available in a player inventory.
