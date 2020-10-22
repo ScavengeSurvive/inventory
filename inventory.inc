@@ -14,8 +14,8 @@
 #include <logger>
 #include <item>
 #include <container>
-#include <YSI\y_timers>
-#include <YSI\y_hooks>
+#include <YSI_Coding\y_timers>
+#include <YSI_Coding\y_hooks>
 
 
 // Maximum amount of item slots available in a player inventory.
@@ -234,17 +234,17 @@ stock GetPlayerInventorySize(playerid, &size) {
 
 _inventory_playerSetup(playerid) {
 	if(IsValidContainer(inv_Container[playerid])) {
-		err("attempted to create inventory container for player and container already exists",
-			_i("playerid", playerid),
-			_i("containerid", _:inv_Container[playerid]));
+		Logger_Err("attempted to create inventory container for player and container already exists",
+			Logger_I("playerid", playerid),
+			Logger_I("containerid", _:inv_Container[playerid]));
 	}
 
 	new Container:containerid = CreateContainer("Inventory", MAX_INVENTORY_SLOTS);
 
 	if(!IsValidContainer(containerid)) {
-		err("failed to create inventory container for player",
-			_i("playerid", playerid),
-			_i("containerid", _:containerid));
+		Logger_Err("failed to create inventory container for player",
+			Logger_I("playerid", playerid),
+			Logger_I("containerid", _:containerid));
 		
 		return;
 	}
@@ -255,16 +255,16 @@ _inventory_playerSetup(playerid) {
 
 timer _inventory_tearDown[1](playerid) {
 	if(!IsValidContainer(inv_Container[playerid])) {
-		err("attempted to delete inventory container for player and container does not exist",
-			_i("playerid", playerid));
+		Logger_Err("attempted to delete inventory container for player and container does not exist",
+			Logger_I("playerid", playerid));
 	}
 
 	new ret = DestroyContainer(inv_Container[playerid]);
 
 	if(ret != 0) {
-		err("failed to destroy inventory container for player",
-			_i("playerid", playerid),
-			_i("return", ret));
+		Logger_Err("failed to destroy inventory container for player",
+			Logger_I("playerid", playerid),
+			Logger_I("return", ret));
 	}
 
 	inv_ContainerPlayer[inv_Container[playerid]] = INVALID_PLAYER_ID;
