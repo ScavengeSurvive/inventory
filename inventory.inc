@@ -83,11 +83,11 @@ forward OnItemAddedToInventory(playerid, itemid);
 
 // Before an item is removed from a player's inventory by the function
 // `RemoveItemFromInventory`. Return 1 to cancel.
-forward OnItemRemoveFromInventory(playerid, Item:itemid);
+forward OnItemRemoveFromInventory(playerid, slot, Item:itemid);
 
 // Called after an item is removed from a player's inventory by the function
 // `RemoveItemFromInventory`.
-forward OnItemRemovedFromInventory(playerid, Item:itemid);
+forward OnItemRemovedFromInventory(playerid, slot, Item:itemid);
 
 
 static
@@ -127,7 +127,7 @@ stock RemoveItemFromInventory(playerid, slotid, call = 1) {
 	GetInventorySlotItem(playerid, slotid, itemid);
 
 	if(call) {
-		if(CallLocalFunction("OnItemRemoveFromInventory", "dd", playerid, _:itemid)) {
+		if(CallLocalFunction("OnItemRemoveFromInventory", "ddd", playerid, slotid, _:itemid)) {
 			return 0;
 		}
 	}
@@ -138,7 +138,7 @@ stock RemoveItemFromInventory(playerid, slotid, call = 1) {
 	}
 
 	if(call) {
-		CallLocalFunction("OnItemRemovedFromInventory", "dd", playerid, _:itemid);
+		CallLocalFunction("OnItemRemovedFromInventory", "ddd", playerid, slotid, _:itemid);
 	}
 
 	return 1;
