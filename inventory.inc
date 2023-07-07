@@ -203,6 +203,10 @@ stock GetItemInventoryPlayer(Item:itemid, &playerid) {
 		return ret;
 	}
 
+	if(!IsValidContainer(containerid)) {
+		return 2;
+	}
+
 	playerid = inv_ContainerPlayer[containerid];
 	return 0;
 }
